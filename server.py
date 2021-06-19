@@ -6,7 +6,12 @@ server.bind(('localhost', 9292))
 print('Waiting For Connection...')
 server.listen()
 
-client_connection, _client_address = server.accept()
+(client_connection, _client_address) = server.accept()
 print('New Connection received!')
-
+data = client_connection.recv(1024).decode()
+print(data)
+reply = """rHTTP/1.0 200 OK
+Content-Type: text/plain
+Hello, world!"""
+client_connection.send(r"""HTTP/1.0 200 OK Content-Type: text/plain Hello, world!""")
 client_connection.close()
