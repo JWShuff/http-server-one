@@ -10,8 +10,10 @@ server.listen()
 print('New Connection received!')
 data = client_connection.recv(1024).decode()
 print(data)
-reply = """rHTTP/1.0 200 OK
-Content-Type: text/plain
-Hello, world!"""
-client_connection.send(r"""HTTP/1.0 200 OK Content-Type: text/plain Hello, world!""")
+
+client_connection.sendall(b"HTTP/1.1 200 OK\n"
+         +b"Content-Type: text/html\n"
+         +b"\n" # Important!
+         +b"<html><body>Hello World</body></html>\n")
+
 client_connection.close()
