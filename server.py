@@ -1,21 +1,31 @@
 import socket
+import datetime
+from request import Request
+
+def build_html_response(text_body):
+    html_body = f'<html><head><title>An Example Page</title></head><body>{text_body}</body></html>'
+    return f"HTTP/1.1 200 OK \r\nContent-Type:text/html\r\nContent-Length:{len(html_body)}\r\n\r\n{html_body}"
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # so you don't have to change ports when restarting
 server.bind(('localhost', 9292))
+
+def current_time():
+    time = datetime.datetime.now()
+    cur_time = time.strftime("%H%M%S")
+    print(cur_time)
+    return cur_time
+
 while True:
     print('Waiting For Connection...')
     server.listen()
 
     (client_connection, _client_address) = server.accept()
-    print('New Connection received!')
-    data = client_connection.recv(1024).decode()
-    print(data)
+    client_request = Request(client_connection)
+    if client_request.parsed_request['uri'] =='/':
+        client_connection.send(build_html_response("Hello World!").encode())
+    elif client_request.parsed_request['uri'] == '/time':
+        cur_time = current_time()
+        client_connection.send(build_html_response(f"The current time is {cur_time}"))
 
-    client_connection.sendall(b"HTTP/1.1 200 OK\n"
-            +b"Content-Type: text/html\n"
-            +b"\n" # Important!
-            +b"<html><body><p>Hello World!</p></body></html>\n")
     client_connection.close()
-
-
