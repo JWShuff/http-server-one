@@ -12,7 +12,7 @@ server.bind(('localhost', 9292))
 
 def current_time():
     time = datetime.datetime.now()
-    cur_time = time.strftime("%H%M%S")
+    cur_time = time.strftime("%H:%M")
     print(cur_time)
     return cur_time
 
@@ -26,6 +26,6 @@ while True:
         client_connection.send(build_html_response("Hello World!").encode())
     elif client_request.parsed_request['uri'] == '/time':
         cur_time = current_time()
-        client_connection.send(build_html_response(f"The current time is {cur_time}"))
+        client_connection.send(build_html_response(f"The current time is {cur_time}").encode())
 
     client_connection.close()
